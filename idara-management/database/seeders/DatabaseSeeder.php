@@ -8,7 +8,8 @@ class DatabaseSeeder extends Seeder
 {
     /**
      * Tartibu ni muhimu: roles kabla ya admin (anahitaji role 'admin'),
-     * departments kabla ya kuweza kuwaunganisha viongozi/wanachama.
+     * admin kabla ya letter templates (zinahitaji created_by), departments
+     * kabla ya kuweza kuwaunganisha viongozi/wanachama.
      */
     public function run(): void
     {
@@ -16,6 +17,7 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,
             AdminUserSeeder::class,
             DepartmentSeeder::class,
+            LetterTemplateSeeder::class,
         ]);
     }
 }

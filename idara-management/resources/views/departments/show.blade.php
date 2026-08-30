@@ -13,6 +13,17 @@
         @endcan
     </div>
 
+    <nav class="flex flex-wrap gap-2 mb-6 text-sm">
+        <a href="{{ route('departments.sms.index', $department) }}" class="px-3 py-1.5 rounded-md bg-white border border-gray-200 hover:border-indigo-400">SMS</a>
+        <a href="{{ route('departments.letters.index', $department) }}" class="px-3 py-1.5 rounded-md bg-white border border-gray-200 hover:border-indigo-400">Barua</a>
+        @can('viewAny', [\App\Models\DepartmentTransaction::class, $department])
+            <a href="{{ route('departments.transactions.index', $department) }}" class="px-3 py-1.5 rounded-md bg-white border border-gray-200 hover:border-indigo-400">Miamala</a>
+        @endcan
+        <a href="{{ route('departments.schedules.index', $department) }}" class="px-3 py-1.5 rounded-md bg-white border border-gray-200 hover:border-indigo-400">Ratiba ya Mwaka</a>
+        <a href="{{ route('departments.activity-logs.index', $department) }}" class="px-3 py-1.5 rounded-md bg-white border border-gray-200 hover:border-indigo-400">Shughuli</a>
+        <a href="{{ route('departments.reports.index', $department) }}" class="px-3 py-1.5 rounded-md bg-white border border-gray-200 hover:border-indigo-400">Ripoti</a>
+    </nav>
+
     <div class="grid md:grid-cols-2 gap-6">
 
         {{-- Viongozi --}}

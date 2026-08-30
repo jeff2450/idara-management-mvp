@@ -6,6 +6,7 @@ use App\Models\Scopes\DepartmentVisibilityScope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 
 /**
@@ -54,5 +55,26 @@ class Department extends Model
     public function members(): BelongsToMany
     {
         return $this->users()->wherePivot('role', 'member');
+    }
+
+    /**
+     * Awamu ya 3 (prd.md §5.3) - Ratiba ya Mwaka, Shughuli, na Ripoti za
+     * idara hii. Modeli hizi tatu zinatumia trait `BelongsToDepartment`
+     * (Global Scope), hivyo `$department->annualSchedules` daima inarudisha
+     * rekodi za idara hii pekee bila hatari ya kuvuja kwenda idara nyingine.
+     */
+    public function annualSchedules(): HasMany
+    {
+        return $this->hasMany(AnnualSchedule::class);
+    }
+
+    public function activityLogs(): HasMany
+    {
+        return $this->hasMany(ActivityLog::class);
+    }
+
+    public function reports(): HasMany
+    {
+        return $this->hasMany(Report::class);
     }
 }

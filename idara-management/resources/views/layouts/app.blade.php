@@ -21,6 +21,9 @@
             <div class="flex items-center gap-4 text-sm">
                 <a href="{{ route('dashboard') }}" class="hover:text-indigo-700">Dashibodi</a>
                 <a href="{{ route('departments.index') }}" class="hover:text-indigo-700">Idara</a>
+                @if (auth()->user()->isAdmin())
+                    <a href="{{ route('letter-templates.index') }}" class="hover:text-indigo-700">Templates za Barua</a>
+                @endif
                 <span class="text-gray-400">|</span>
                 <span class="text-gray-600">{{ auth()->user()->name }}
                     <span class="text-xs text-gray-400">({{ auth()->user()->getRoleNames()->first() ?? 'member' }})</span>

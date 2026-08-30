@@ -15,7 +15,7 @@ class DepartmentSeeder extends Seeder
     public function run(): void
     {
         $departments = [
-            ['name' => 'Idara ya Watoto', 'description' => 'Huduma na mafunzo kwa watoto.'],
+            ['name' => 'Idara ya Watoto', 'description' => 'Huduma na mafunzo kwa watoto.', 'is_sensitive' => true],
             ['name' => 'Idara ya Wamama', 'description' => 'Huduma na mafunzo kwa wamama.'],
             ['name' => 'Idara ya Vijana', 'description' => 'Huduma na mafunzo kwa vijana.'],
             ['name' => 'Idara ya Kusifu na Kuabudu', 'description' => 'Huduma ya muziki, kusifu na kuabudu.'],

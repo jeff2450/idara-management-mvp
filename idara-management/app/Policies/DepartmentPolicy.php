@@ -43,9 +43,18 @@ class DepartmentPolicy
      * Kuongeza/kuondoa kiongozi/mwanachama kwenye idara. Sheria ya ziada
      * "leader ni Admin pekee" inathibitishwa kwenye
      * StoreDepartmentMemberRequest::withValidator().
+     *
+     * ULINZI WA ZIADA (architecture.md §5): kwa idara zilizowekwa alama
+     * `is_sensitive` (mfano Idara ya Watoto), Admin PEKEE ndiye anaweza
+     * kubadilisha uanachama - kiongozi wa idara hiyo hawezi kujiongezea
+     * wanachama mwenyewe bila Admin kuhusika.
      */
     public function manageMembers(User $user, Department $department): bool
     {
+        if ($department->is_sensitive) {
+            return $user->isAdmin();
+        }
+
         return $user->isAdmin() || $user->leadsDepartment($department);
     }
 }

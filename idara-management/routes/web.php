@@ -1,8 +1,11 @@
 <?php
 
+use App\Http\Controllers\ActivityLogController;
+use App\Http\Controllers\AnnualScheduleController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\DepartmentMemberController;
+use App\Http\Controllers\DepartmentProgressController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -31,13 +34,23 @@ Route::middleware('auth')->group(function () {
         Route::delete('/idara/{department}', [DepartmentController::class, 'destroy'])->name('departments.destroy');
     });
 
-    // Kuongeza/kuondoa kiongozi au mwanachama kwenye idara.
-    // 'department.access' inahakikisha kiongozi anaweza kubadilisha idara yake pekee;
-    // Admin (aliye na role 'admin') anaruhusiwa kwa idara zote - angalia EnsureDepartmentAccess.
+    // Kuongeza/kuondoa kiongozi au mwanachama kwenye idara, na Awamu ya 3
+    // (ratiba, shughuli, maendeleo) - vyote vinahitaji 'department.access'
+    // kuhakikisha mtumiaji anahusika na idara hii - angalia EnsureDepartmentAccess.
     Route::middleware('department.access')->group(function () {
         Route::post('/idara/{department}/wanachama', [DepartmentMemberController::class, 'store'])
             ->name('departments.members.store');
         Route::delete('/idara/{department}/wanachama/{user}', [DepartmentMemberController::class, 'destroy'])
             ->name('departments.members.destroy');
+
+        // Awamu ya 3 - prd.md §5.3
+        Route::get('/idara/{department}/ratiba', [AnnualScheduleController::class, 'index'])->name('schedules.index');
+        Route::post('/idara/{department}/ratiba', [AnnualScheduleController::class, 'store'])->name('schedules.store');
+        Route::put('/idara/{department}/ratiba/{schedule}', [AnnualScheduleController::class, 'update'])->name('schedules.update');
+        Route::delete('/idara/{department}/ratiba/{schedule}', [AnnualScheduleController::class, 'destroy'])->name('schedules.destroy');
+
+        Route::post('/idara/{department}/shughuli', [ActivityLogController::class, 'store'])->name('activity-logs.store');
+
+        Route::get('/idara/{department}/maendeleo', [DepartmentProgressController::class, 'show'])->name('departments.progress');
     });
 });

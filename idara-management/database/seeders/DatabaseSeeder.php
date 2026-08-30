@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             AdminUserSeeder::class,
             DepartmentSeeder::class,
             LetterTemplateSeeder::class,
+            DemoDataSeeder::class,
         ]);
     }
 }

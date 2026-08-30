@@ -23,7 +23,15 @@ class Department extends Model
         'name',
         'slug',
         'description',
+        'is_sensitive',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'is_sensitive' => 'boolean',
+        ];
+    }
 
     protected static function booted(): void
     {
@@ -55,6 +63,21 @@ class Department extends Model
     public function members(): BelongsToMany
     {
         return $this->users()->wherePivot('role', 'member');
+    }
+
+    public function smsLogs(): HasMany
+    {
+        return $this->hasMany(SmsLog::class);
+    }
+
+    public function letters(): HasMany
+    {
+        return $this->hasMany(Letter::class);
+    }
+
+    public function transactions(): HasMany
+    {
+        return $this->hasMany(DepartmentTransaction::class);
     }
 
     /**

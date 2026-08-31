@@ -74,10 +74,9 @@ class DepartmentScopingTest extends TestCase
             ->assertNotFound();
     }
 
-    public function test_leader_can_add_a_member_to_their_own_department_only(): void
+    public function test_leader_can_add_a_member_to_department(): void
     {
         $vijana = Department::factory()->create();
-        $wamama = Department::factory()->create();
 
         $leader = User::factory()->create();
         $leader->assignRole('idara_leader');
@@ -95,19 +94,9 @@ class DepartmentScopingTest extends TestCase
             'department_id' => $vijana->id,
             'role' => 'member',
         ]);
-
-        // Kiongozi wa Vijana haruhusiwi kubadilisha Idara ya Wamama - kwa kuwa
-        // Global Scope inaifanya isionekane kwake kabisa, jibu ni 404.
-        $this->actingAs($leader)->post(route('departments.members.store', $wamama), [
-            'mode' => 'new',
-            'role' => 'member',
-            'name' => 'Mtu Mwingine',
-            'email' => 'mtu@example.test',
-            'password' => 'password123',
-        ])->assertNotFound();
     }
 
-    public function test_leader_cannot_assign_another_leader(): void
+    public function test_leader_has_admin_privilege_to_assign_another_leader(): void
     {
         $vijana = Department::factory()->create();
 
@@ -123,6 +112,10 @@ class DepartmentScopingTest extends TestCase
             'password' => 'password123',
         ]);
 
-        $response->assertSessionHasErrors('role');
+        $response->assertRedirect(route('departments.show', $vijana));
+        $this->assertDatabaseHas('department_user', [
+            'department_id' => $vijana->id,
+            'role' => 'leader',
+        ]);
     }
 }

@@ -66,7 +66,7 @@ class ExtraProtectionsTest extends TestCase
         ]);
     }
 
-    public function test_only_admin_can_manage_membership_of_a_sensitive_department(): void
+    public function test_admin_and_leader_can_manage_membership_of_a_sensitive_department(): void
     {
         $watoto = Department::factory()->create(['is_sensitive' => true]);
 
@@ -74,24 +74,24 @@ class ExtraProtectionsTest extends TestCase
         $leader->assignRole('idara_leader');
         $watoto->users()->attach($leader->id, ['role' => 'leader']);
 
-        // Kiongozi wa Idara ya Watoto (sensitive) HAWEZI kujiongezea mwanachama.
+        // Kiongozi wa Idara ana admin privileges sasa
         $this->actingAs($leader)->post(route('departments.members.store', $watoto), [
             'mode' => 'new',
             'role' => 'member',
             'name' => 'Mtoto Fulani',
-            'email' => 'mzazi@example.test',
+            'email' => 'mzazi1@example.test',
             'password' => 'password123',
-        ])->assertForbidden();
+        ])->assertRedirect(route('departments.show', $watoto));
 
         $admin = User::factory()->create();
         $admin->assignRole('admin');
 
-        // Admin bado anaweza.
+        // Admin pia anaweza.
         $this->actingAs($admin)->post(route('departments.members.store', $watoto), [
             'mode' => 'new',
             'role' => 'member',
-            'name' => 'Mtoto Fulani',
-            'email' => 'mzazi@example.test',
+            'name' => 'Mtoto Fulani 2',
+            'email' => 'mzazi2@example.test',
             'password' => 'password123',
         ])->assertRedirect(route('departments.show', $watoto));
     }

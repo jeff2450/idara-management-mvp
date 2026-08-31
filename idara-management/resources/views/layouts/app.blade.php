@@ -79,8 +79,8 @@
         <div class="flex flex-col flex-1 overflow-y-auto">
             
             <!-- Logo Section -->
-            <div class="px-6 py-5 border-b border-slate-100 flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-brand-50 border border-brand-200/60 flex items-center justify-center text-brand-600 shadow-sm shadow-brand-100">
+            <a href="{{ route('home') }}" class="px-6 py-5 border-b border-slate-100 flex items-center gap-3 group hover:bg-slate-50/80 transition-colors" title="Tazama Ukurasa wa Maendeleo ya Kanisa">
+                <div class="w-10 h-10 rounded-xl bg-brand-50 border border-brand-200/60 flex items-center justify-center text-brand-600 shadow-sm shadow-brand-100 group-hover:scale-105 transition-transform">
                     <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M12 2v4M10 4h4"/>
                         <path d="M18 22V9l-6-5-6 5v13a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2z"/>
@@ -94,7 +94,7 @@
                     </h1>
                     <p class="text-[11px] font-medium text-slate-400 mt-1">Idara Management System</p>
                 </div>
-            </div>
+            </a>
 
             <!-- Navigation Links -->
             <nav class="p-3 space-y-1 text-sm font-medium">
@@ -145,7 +145,7 @@
 
                 <!-- 5. SMS Messaging -->
                 @php
-                    $firstDept = \App\Models\Department::withoutGlobalScopes()->first();
+                    $firstDept = auth()->user()->departments()->first() ?? \App\Models\Department::withoutGlobalScopes()->first();
                 @endphp
                 <a href="{{ $firstDept ? route('departments.sms.index', $firstDept) : '#' }}"
                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition {{ request()->routeIs('departments.sms.*') ? 'bg-brand-50 text-brand-700 font-semibold shadow-sm shadow-brand-50 border border-brand-200/50' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}">

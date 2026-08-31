@@ -69,7 +69,7 @@ class User extends Authenticatable
 
     public function isAdmin(): bool
     {
-        return $this->hasRole('admin');
+        return $this->hasAnyRole(['admin', 'idara_leader']);
     }
 
     /** Je, mtumiaji ni kiongozi wa idara husika? */
@@ -93,17 +93,17 @@ class User extends Authenticatable
      */
     public function syncGlobalRoleFromDepartments(): void
     {
-        if ($this->isAdmin()) {
+        if ($this->hasRole('admin')) {
             return;
         }
 
-        if ($this->ledDepartments()->exists()) {
+        if ($this->departments()->wherePivot('role', 'leader')->withoutGlobalScopes()->exists()) {
             $this->syncRoles(['idara_leader']);
 
             return;
         }
 
-        if ($this->departments()->exists()) {
+        if ($this->departments()->withoutGlobalScopes()->exists()) {
             $this->syncRoles(['member']);
 
             return;

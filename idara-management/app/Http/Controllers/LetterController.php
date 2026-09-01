@@ -93,6 +93,34 @@ class LetterController extends Controller
 
         abort_unless($letter->department_id === $department->id, 404);
 
+        if (! Storage::disk('local')->exists($letter->file_path)) {
+            $letter->loadMissing('template');
+            if ($letter->template) {
+                $mergeData = [
+                    'idara' => $department->name,
+                    'tarehe' => $letter->created_at?->translatedFormat('d F Y') ?? now()->translatedFormat('d F Y'),
+                    'jina_mwanachama' => $letter->recipient_name ?? '',
+                ];
+
+                $body = preg_replace_callback(
+                    '/\{\{\s*([a-zA-Z0-9_]+)\s*\}\}/',
+                    fn ($matches) => e($mergeData[$matches[1]] ?? ''),
+                    $letter->template->body_template
+                );
+
+                $pdf = Pdf::loadView('pdf.letter', [
+                    'body' => $body,
+                    'department' => $department,
+                ]);
+
+                $filename = 'letters/'.$department->id.'/'.Str::uuid().'.pdf';
+                Storage::disk('local')->put($filename, $pdf->output());
+                $letter->update(['file_path' => $filename]);
+            } else {
+                abort(404, 'Faili ya barua haikupatikana.');
+            }
+        }
+
         return Storage::disk('local')->download($letter->file_path, 'barua-'.$letter->id.'.pdf');
     }
 }

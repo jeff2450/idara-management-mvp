@@ -8,6 +8,7 @@ use App\Services\Reports\DepartmentReportGenerator;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 /**
@@ -48,12 +49,20 @@ class ReportController extends Controller
             ->with('status', 'Ripoti imezalishwa.');
     }
 
-    public function download(Department $department, Report $report): \Symfony\Component\HttpFoundation\StreamedResponse
+    public function download(Department $department, Report $report, DepartmentReportGenerator $generator): \Symfony\Component\HttpFoundation\StreamedResponse
     {
         $this->authorize('view', $report);
 
         abort_unless($report->department_id === $department->id, 404);
 
-        return Storage::disk('local')->download($report->file_path, 'ripoti-'.$report->period.'.pdf');
+        if (! Storage::disk('local')->exists($report->file_path)) {
+            $filename = 'reports/'.$department->id.'/'.Str::slug($report->period).'-'.Str::uuid().'.pdf';
+            Storage::disk('local')->put($filename, $generator->renderPdf($department, $report->period));
+            $report->update(['file_path' => $filename]);
+        }
+
+        $safePeriodName = str_replace([':', '/'], '-', $report->period);
+
+        return Storage::disk('local')->download($report->file_path, 'ripoti-'.$safePeriodName.'.pdf');
     }
 }

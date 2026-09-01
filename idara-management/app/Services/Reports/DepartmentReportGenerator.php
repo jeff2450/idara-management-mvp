@@ -21,7 +21,7 @@ class DepartmentReportGenerator
     /**
      * @param  string  $period  'yearly:2026' au 'monthly:2026-08'
      */
-    public function generate(Department $department, string $period): Report
+    public function renderPdf(Department $department, string $period): string
     {
         [$start, $end, $label] = $this->resolvePeriod($period);
 
@@ -44,8 +44,16 @@ class DepartmentReportGenerator
             'totalAmount' => $transactions->sum('amount'),
         ]);
 
+        return $pdf->output();
+    }
+
+    /**
+     * @param  string  $period  'yearly:2026' au 'monthly:2026-08'
+     */
+    public function generate(Department $department, string $period): Report
+    {
         $filename = 'reports/'.$department->id.'/'.Str::slug($period).'-'.Str::uuid().'.pdf';
-        Storage::disk('local')->put($filename, $pdf->output());
+        Storage::disk('local')->put($filename, $this->renderPdf($department, $period));
 
         return Report::create([
             'department_id' => $department->id,
